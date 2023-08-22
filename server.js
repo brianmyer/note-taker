@@ -2,9 +2,12 @@ const express = require('express');
 const path = require('path');
 const uuid = require('./helpers/uuid');
 const notesArray = require('./db/db.json');
+const fs = require('fs');
 const PORT = 4000;
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
@@ -29,7 +32,18 @@ app.post('/api/notes', (req, res) => {
         text,
         review_id: uuid(),
       };
-  
+      // Persisting Data
+      notesArray.push(newNote);
+      const notesString = JSON.stringify(notesArray);
+
+      fs.writeFile(`./db/db.json`, notesString, (err) =>
+      err
+        ? console.error(err)
+        : console.log(
+            `Note: ${newNote.title} has been written to JSON file`
+          )
+    );
+
       const response = {
         status: 'success',
         body: newNote,
@@ -38,7 +52,7 @@ app.post('/api/notes', (req, res) => {
       console.log(response);
       res.status(201).json(response);
     } else {
-      res.status(500).json('Error in posting review');
+      res.status(500).json('Error in posting note');
     }
   });
 
