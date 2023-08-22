@@ -19,7 +19,7 @@ app.get('/api/notes', (req, res) => res.json(notesArray));
 
 app.post('/api/notes', (req, res) => {
     // Log that a POST request was received
-    console.info(`${req.method} request received to add a review`);
+    console.info(`${req.method} request received to add a note`);
   
     // Destructuring assignment for the items in req.body
     const { title, text } = req.body;
@@ -55,7 +55,6 @@ app.post('/api/notes', (req, res) => {
       res.status(500).json('Error in posting note');
     }
   });
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);
