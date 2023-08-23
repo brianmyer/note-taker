@@ -17,22 +17,45 @@ app.get('/notes', (req, res) => {
 
 app.get('/api/notes', (req, res) => res.json(notesArray));
 
-app.get('/api/notes/:review_id', (req, res) => {
-    if (req.params.review_id) {
+app.get('/api/notes/:id', (req, res) => {
+  console.log("hitting api/notes")
+    if (req.params.id) {
       console.info(`${req.method} request received to get a single a note`);
-      const noteId = req.params.review_id;
+      const noteId = req.params.id;
       for (let i = 0; i < notesArray.length; i++) {
         const currentNote = notesArray[i];
-        if (currentNote.review_id === noteId) {
+        if (currentNote.id === noteId) {
           res.status(200).json(currentNote);
           return;
         }
       }
       res.status(404).send('Note not found');
-    } else {
-      res.status(400).send('Note ID not provided');
-    }
+    } 
   });
+
+  app.delete('/api/notes/:id', (req, res) => {
+    console.log("hitting api/notes")
+      if (req.params.id) {
+        console.info(`${req.method} request received to delete a single a note`);
+        for (let i = 0; i < notesArray.length; i++) {
+          const currentNote = notesArray[i];
+          console.log(notesArray)
+          console.log(currentNote)
+          notesArray.splice(i, 1)
+      const notesString = JSON.stringify(notesArray);
+
+      fs.writeFile(`./db/db.json`, notesString, (err) =>
+      err
+        ? console.error(err)
+        : console.log(
+            `Note: ${currentNote.title} has been deleted from JSON file`
+          )
+    );
+            return;
+        }
+        res.status(404).send('Note not found');
+      } 
+    });
 
 app.post('/api/notes', (req, res) => {
     // Log that a POST request was received
@@ -47,7 +70,7 @@ app.post('/api/notes', (req, res) => {
       const newNote = {
         title,
         text,
-        review_id: uuid(),
+        id: uuid(),
       };
       // Persisting Data
       notesArray.push(newNote);
