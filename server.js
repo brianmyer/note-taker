@@ -17,6 +17,23 @@ app.get('/notes', (req, res) => {
 
 app.get('/api/notes', (req, res) => res.json(notesArray));
 
+app.get('/api/notes/:review_id', (req, res) => {
+    if (req.params.review_id) {
+      console.info(`${req.method} request received to get a single a note`);
+      const noteId = req.params.review_id;
+      for (let i = 0; i < notesArray.length; i++) {
+        const currentNote = notesArray[i];
+        if (currentNote.review_id === noteId) {
+          res.status(200).json(currentNote);
+          return;
+        }
+      }
+      res.status(404).send('Note not found');
+    } else {
+      res.status(400).send('Note ID not provided');
+    }
+  });
+
 app.post('/api/notes', (req, res) => {
     // Log that a POST request was received
     console.info(`${req.method} request received to add a note`);
