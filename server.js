@@ -38,22 +38,26 @@ app.delete('/api/notes/:id', (req, res) => {
   if (req.params.id) {
     console.info(`${req.method} request received to delete a single a note`);
     for (let i = 0; i < notesArray.length; i++) {
-      const currentNote = notesArray[i];
-      console.log(notesArray)
-      console.log(currentNote)
-      notesArray.splice(i, 1)
-      const notesString = JSON.stringify(notesArray);
+      if (notesArray[i].id === req.params.id) {
 
-      fs.writeFile(`./db/db.json`, notesString, (err) => {
-        if (err) {
-          console.error(err)
-        } else {
-          console.log(
-            `Note: ${currentNote.title} has been deleted from JSON file`
-        )
-        res.send()
-      }
+        const currentNote = notesArray[i];
+        console.log(notesArray)
+        console.log(currentNote)
+        notesArray.splice(i, 1)
+        const notesString = JSON.stringify(notesArray);
+        
+        fs.writeFile(`./db/db.json`, notesString, (err) => {
+          if (err) {
+            console.error(err)
+          } else {
+            console.log(
+              `Note: ${currentNote.title} has been deleted from JSON file`
+              )
+              res.send()
+            
+            }
           });
+        }
       return;
     }
     res.status(404).send('Note not found');
@@ -97,6 +101,10 @@ app.post('/api/notes', (req, res) => {
   } else {
     res.status(500).json('Error in posting note');
   }
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.listen(PORT, () => {
